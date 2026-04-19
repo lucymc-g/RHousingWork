@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fair Housing Opportunity Mapping · Boulder HOME Consortium</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f7f5f0;
+      --surface: #ffffff;
+      --ink: #1a1814;
+      --ink-muted: #6b6760;
+      --ink-faint: #b0aca4;
+      --accent: #2d5a27;
+      --rule: #e0ddd6;
+      --tag-bg: #eeeae3;
+      --tag-ink: #4a4740;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    /* ── Page header ── */
+    .page-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--rule);
+      padding: 2rem 2.5rem 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .back-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .back-link:hover { color: var(--accent); border-color: var(--accent); }
+
+    .eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+
+    .page-header h1 {
+      font-family: 'Lora', serif;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 400;
+      line-height: 1.25;
+      margin-bottom: 0.75rem;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--ink-muted);
+      max-width: 660px;
+      line-height: 1.7;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--tag-ink);
+      background: var(--tag-bg);
+      padding: 3px 9px;
+      border-radius: 3px;
+    }
+
+    /* ── Main ── */
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 5rem;
+    }
+
+    /* ── Context block ── */
+    .context-block {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 1.75rem 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .context-block h2 {
+      font-family: 'Lora', serif;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+    }
+
+    .context-block p {
+      font-size: 14px;
+      color: var(--ink-muted);
+      line-height: 1.75;
+      margin-bottom: 0.65rem;
+    }
+    .context-block p:last-child { margin-bottom: 0; }
+
+    /* ── Section label ── */
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    /* ── Map cards ── */
+    .map-card {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+
+    .map-card-body {
+      padding: 1.5rem 2rem 1.25rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .map-card-body h3 {
+      font-family: 'Lora', serif;
+      font-size: 1.05rem;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .map-card-body p {
+      font-size: 13.5px;
+      color: var(--ink-muted);
+      line-height: 1.7;
+      max-width: 680px;
+    }
+
+    .map-img-wrap {
+      background: #faf9f7;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: center;
+      cursor: zoom-in;
+    }
+
+    .map-img-wrap img {
+      max-width: 100%;
+      max-height: 620px;
+      object-fit: contain;
+      border-radius: 4px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      transition: transform 0.2s;
+    }
+
+    .map-img-wrap img:hover {
+      transform: scale(1.01);
+    }
+
+    .map-caption {
+      padding: 0.75rem 2rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-faint);
+      border-top: 1px solid var(--rule);
+    }
+
+    /* ── Lightbox ── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+    }
+    .lightbox.active { display: flex; }
+    .lightbox img {
+      max-width: 92vw;
+      max-height: 92vh;
+      object-fit: contain;
+      border-radius: 4px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    }
+    .lightbox-close {
+      position: fixed;
+      top: 1.25rem;
+      right: 1.5rem;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      opacity: 0.7;
+      transition: opacity 0.15s;
+    }
+    .lightbox-close:hover { opacity: 1; }
+
+    /* ── Methods block ── */
+    .methods-block {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 1.75rem 2rem;
+      margin-top: 2.5rem;
+    }
+
+    .methods-block h2 {
+      font-family: 'Lora', serif;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+
+    .methods-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .method-item {
+      border-left: 2px solid var(--rule);
+      padding-left: 0.85rem;
+    }
+
+    .method-item .label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 0.3rem;
+    }
+
+    .method-item p {
+      font-size: 13px;
+      color: var(--ink-muted);
+      line-height: 1.5;
+    }
+
+    @media (max-width: 600px) {
+      .page-header, main { padding-left: 1.25rem; padding-right: 1.25rem; }
+      .map-card-body, .map-caption { padding-left: 1.25rem; padding-right: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-header">
+    <a class="back-link" href="../index.html">← back to portfolio</a>
+    <p class="eyebrow">Fair Housing · Spatial Analysis</p>
+    <h1>Boulder HOME Consortium<br>Affirmatively Furthering Fair Housing Maps</h1>
+    <p>
+      Tract-level opportunity mapping for the Boulder, Broomfield, and Longmont HOME
+      Consortium fair housing assessment. Maps visualize income distribution, racial and
+      ethnic concentration, HMDA lending patterns, and HUD RECAP indicators across
+      Boulder and Broomfield counties.
+    </p>
+    <div class="meta-row">
+      <span class="tag">tmap</span>
+      <span class="tag">sf</span>
+      <span class="tag">tidycensus</span>
+      <span class="tag">ACS 5-year</span>
+      <span class="tag">HMDA</span>
+      <span class="tag">R</span>
+    </div>
+  </div>
+
+  <main>
+
+    <div class="context-block">
+      <h2>Project Context</h2>
+      <p>
+        This analysis was produced as part of a Consolidated Plan and fair housing assessment
+        for the Boulder HOME Consortium, which includes the City of Boulder, City of Longmont,
+        and Broomfield County. Maps were produced using census tract-level ACS data merged with
+        locally compiled income, race/ethnicity, and lending datasets.
+      </p>
+      <p>
+        Spatial layers include primary and secondary roads from TIGER/Line shapefiles, municipal
+        place boundaries, and county outlines. Blue outlines on maps indicate HUD-defined areas
+        of racial or ethnic minority concentration (RECAP thresholds).
+      </p>
+    </div>
+
+    <p class="section-label">Maps</p>
+
+    <!-- Map 1: AMI -->
+    <div class="map-card">
+      <div class="map-card-body">
+        <h3>Income Distribution by Census Tract</h3>
+        <p>
+          Tract-level share of households earning below 80% of Area Median Income (low income,
+          orange) and above 150% AMI (high income, blue). Downtown Boulder tracts show the
+          highest concentration of low-income households, while affluent tracts cluster in
+          the foothills and eastern Boulder suburbs.
+        </p>
+      </div>
+      <div class="map-img-wrap" onclick="openLightbox('BoulderAMIMap.png')">
+        <img src="BoulderAMIMap.png" alt="Boulder County income distribution maps showing percent low income (less than 80% AMI) and high income (150% AMI+) by census tract" />
+      </div>
+      <div class="map-caption">Boulder County · ACS 5-year estimates · % Low Income (&lt;80% AMI) top · % High Income (150%+ AMI) bottom · click to enlarge</div>
+    </div>
+
+    <!-- Map 2: Race/Ethnicity -->
+    <div class="map-card">
+      <div class="map-card-body">
+        <h3>Racial and Ethnic Composition by Census Tract</h3>
+        <p>
+          Share of residents identifying as non-White or Hispanic by tract. Longmont shows
+          notably higher concentrations of non-White and Hispanic residents, with several
+          tracts exceeding 50%. Blue outlines indicate tracts meeting HUD minority
+          concentration thresholds for AFFH analysis.
+        </p>
+      </div>
+      <div class="map-img-wrap" onclick="openLightbox('BoulderNonWhiteMap.png')">
+        <img src="BoulderNonWhiteMap.png" alt="Boulder County map showing percent non-White or Hispanic residents by census tract with minority concentration areas outlined in blue" />
+      </div>
+      <div class="map-caption">Boulder County · ACS 5-year estimates · % Non-White or Hispanic · blue outlines = minority concentration areas · click to enlarge</div>
+    </div>
+
+    <!-- Methods -->
+    <div class="methods-block">
+      <h2>Data &amp; Methods</h2>
+      <div class="methods-grid">
+        <div class="method-item">
+          <div class="label">Geography</div>
+          <p>Census tracts, Boulder and Broomfield counties. TIGER/Line shapefiles (2022).</p>
+        </div>
+        <div class="method-item">
+          <div class="label">Income Data</div>
+          <p>ACS 5-year estimates. Households classified by share below 80% AMI and above 150% AMI.</p>
+        </div>
+        <div class="method-item">
+          <div class="label">Race/Ethnicity</div>
+          <p>ACS 5-year estimates. Non-White or Hispanic share per tract. RECAP thresholds applied per HUD guidance.</p>
+        </div>
+        <div class="method-item">
+          <div class="label">Lending</div>
+          <p>HMDA loan-level data. Denial rates and high-priced loan shares computed at tract level (N ≥ 20 threshold).</p>
+        </div>
+        <div class="method-item">
+          <div class="label">Tools</div>
+          <p>R · tmap · sf · tidyverse · RColorBrewer · TIGER/Line shapefiles.</p>
+        </div>
+        <div class="method-item">
+          <div class="label">Context</div>
+          <p>Produced for Boulder HOME Consortium Consolidated Plan and AFFH assessment.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close" onclick="closeLightbox()">✕</span>
+    <img id="lightbox-img" src="" alt="" />
+  </div>
+
+  <script>
+    function openLightbox(src) {
+      document.getElementById('lightbox-img').src = src;
+      document.getElementById('lightbox').classList.add('active');
+    }
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  </script>
+
+</body>
+</html>
