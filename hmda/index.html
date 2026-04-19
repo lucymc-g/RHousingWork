@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HMDA Lending Analysis · Boulder HOME Consortium</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f7f5f0;
+      --surface: #ffffff;
+      --ink: #1a1814;
+      --ink-muted: #6b6760;
+      --ink-faint: #b0aca4;
+      --accent: #2d5a27;
+      --accent-light: #e8f0e7;
+      --rule: #e0ddd6;
+      --tag-bg: #eeeae3;
+      --tag-ink: #4a4740;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    /* ── Page header ── */
+    .page-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--rule);
+      padding: 2rem 2.5rem 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .back-link {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .back-link:hover { color: var(--accent); border-color: var(--accent); }
+
+    .eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+
+    .page-header h1 {
+      font-family: 'Lora', serif;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 400;
+      line-height: 1.25;
+      margin-bottom: 0.75rem;
+    }
+
+    .page-header p {
+      font-size: 14px;
+      color: var(--ink-muted);
+      max-width: 660px;
+      line-height: 1.7;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--tag-ink);
+      background: var(--tag-bg);
+      padding: 3px 9px;
+      border-radius: 3px;
+    }
+
+    /* ── Main ── */
+    main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 5rem;
+    }
+
+    /* ── Section label ── */
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    /* ── Findings grid ── */
+    .findings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 2.5rem;
+    }
+
+    .finding-card {
+      background: var(--surface);
+      padding: 1.4rem 1.5rem;
+    }
+
+    .finding-card .stat {
+      font-family: 'Lora', serif;
+      font-size: 2rem;
+      font-weight: 400;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+
+    .finding-card .stat-label {
+      font-size: 12px;
+      color: var(--ink-muted);
+      line-height: 1.5;
+    }
+
+    .finding-card .jurisdiction {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: var(--ink-faint);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.35rem;
+    }
+
+    /* ── Key findings text block ── */
+    .findings-text {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 1.75rem 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .findings-text h2 {
+      font-family: 'Lora', serif;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+
+    .findings-text ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .findings-text li {
+      font-size: 14px;
+      color: var(--ink-muted);
+      line-height: 1.7;
+      padding-left: 1.1rem;
+      position: relative;
+    }
+
+    .findings-text li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: 12px;
+      top: 3px;
+    }
+
+    /* ── PDF viewer ── */
+    .pdf-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .pdf-toolbar {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-bottom: none;
+      border-radius: 8px 8px 0 0;
+      padding: 0.85rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .pdf-toolbar-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--ink-muted);
+    }
+
+    .pdf-download {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--accent);
+      text-decoration: none;
+      border: 1px solid var(--accent);
+      padding: 4px 10px;
+      border-radius: 4px;
+      transition: background 0.15s, color 0.15s;
+    }
+    .pdf-download:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    .pdf-embed-wrap {
+      border: 1px solid var(--rule);
+      border-radius: 0 0 8px 8px;
+      overflow: hidden;
+      background: #eee;
+    }
+
+    .pdf-embed-wrap iframe {
+      display: block;
+      width: 100%;
+      height: 780px;
+      border: none;
+    }
+
+    .pdf-fallback {
+      display: none;
+      padding: 2rem;
+      text-align: center;
+      font-size: 14px;
+      color: var(--ink-muted);
+    }
+
+    /* ── Methods ── */
+    .methods-block {
+      background: var(--surface);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 1.75rem 2rem;
+    }
+
+    .methods-block h2 {
+      font-family: 'Lora', serif;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+
+    .methods-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .method-item {
+      border-left: 2px solid var(--rule);
+      padding-left: 0.85rem;
+    }
+
+    .method-item .label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 0.3rem;
+    }
+
+    .method-item p {
+      font-size: 13px;
+      color: var(--ink-muted);
+      line-height: 1.55;
+    }
+
+    @media (max-width: 600px) {
+      .page-header, main { padding-left: 1.25rem; padding-right: 1.25rem; }
+      .pdf-embed-wrap iframe { height: 500px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-header">
+    <a class="back-link" href="../index.html">← back to portfolio</a>
+    <p class="eyebrow">Fair Lending · HMDA Analysis</p>
+    <h1>Mortgage Lending Patterns<br>Boulder HOME Consortium, 2023</h1>
+    <p>
+      Analysis of 2023 Home Mortgage Disclosure Act data examining loan application
+      volumes, denial rates, high-priced loan prevalence, and racial and ethnic lending
+      disparities across Boulder County, Broomfield, City of Boulder, and Longmont.
+      Produced for the Boulder HOME Consortium Consolidated Plan and fair housing assessment.
+    </p>
+    <div class="meta-row">
+      <span class="tag">HMDA 2023</span>
+      <span class="tag">R</span>
+      <span class="tag">dplyr</span>
+      <span class="tag">ggplot2</span>
+      <span class="tag">tmap</span>
+      <span class="tag">ACS 5-year</span>
+      <span class="tag">CRA</span>
+    </div>
+  </div>
+
+  <main>
+
+    <!-- Key stats -->
+    <p class="section-label">Key Statistics · 2023</p>
+    <div class="findings-grid">
+      <div class="finding-card">
+        <div class="jurisdiction">Boulder County</div>
+        <div class="stat">4,628</div>
+        <div class="stat-label">mortgage loan applications, primary residence owner-occupied homes</div>
+      </div>
+      <div class="finding-card">
+        <div class="jurisdiction">Broomfield</div>
+        <div class="stat">1,288</div>
+        <div class="stat-label">mortgage loan applications; lowest denial rate in the Consortium at 8%</div>
+      </div>
+      <div class="finding-card">
+        <div class="jurisdiction">Boulder County</div>
+        <div class="stat">16%</div>
+        <div class="stat-label">denial rate for Hispanic applicants vs. 9% for non-Hispanic White applicants</div>
+      </div>
+      <div class="finding-card">
+        <div class="jurisdiction">Longmont</div>
+        <div class="stat">20%</div>
+        <div class="stat-label">denial rate for Hispanic applicants — highest of any group across all jurisdictions</div>
+      </div>
+    </div>
+
+    <!-- Key findings -->
+    <p class="section-label">Key Findings</p>
+    <div class="findings-text">
+      <h2>Summary of Fair Lending Analysis</h2>
+      <ul>
+        <li>Across all Consortium jurisdictions, Hispanic applicants had the highest loan denial rates. Longmont had the most pronounced disparity at 20% for Hispanic applicants versus 9% for non-Hispanic White applicants.</li>
+        <li>In Boulder and Broomfield Counties, Hispanic applicants had higher denial rates than non-Hispanic White applicants at every income level — suggesting disparities are not fully explained by applicant qualifications and may reflect discriminatory factors.</li>
+        <li>High debt-to-income ratio was the most common denial reason across races in Boulder County, but Hispanic applicants who were denied had the highest proportion citing credit history as a reason (55%).</li>
+        <li>Hispanic applicants in Boulder County were more than twice as likely to receive a high-priced loan (3.2%) compared to non-Hispanic White applicants (1.5%). Black applicants had the highest rate at 4.2%, though the sample size was small (n=24).</li>
+        <li>Tract-level mapping of denial rates and high-priced loan rates was overlaid with HUD-defined Hispanic concentration areas to identify potential geographic fair lending patterns.</li>
+      </ul>
+    </div>
+
+    <!-- PDF viewer -->
+    <p class="section-label">Full Report Section</p>
+    <div class="pdf-section">
+      <div class="pdf-toolbar">
+        <span class="pdf-toolbar-title">BoulderHMDAAnalysis.pdf &nbsp;·&nbsp; Section II, pp. 29–44</span>
+        <a class="pdf-download" href="BoulderHMDAAnalysis.pdf" download>↓ download PDF</a>
+      </div>
+      <div class="pdf-embed-wrap">
+        <iframe
+          src="BoulderHMDAAnalysis.pdf"
+          title="Boulder HOME Consortium HMDA Fair Lending Analysis"
+          aria-label="Embedded PDF: Boulder HMDA Fair Lending Analysis">
+        </iframe>
+      </div>
+    </div>
+
+    <!-- Methods -->
+    <p class="section-label">Data &amp; Methods</p>
+    <div class="methods-block">
+      <h2>Approach</h2>
+      <div class="methods-grid">
+        <div class="method-item">
+          <div class="label">Primary Data</div>
+          <p>HMDA 2023 loan-level records. Applications filtered to primary residence, owner-occupied properties.</p>
+        </div>
+        <div class="method-item">
+          <div class="label">Denial Rate</div>
+          <p>Defined as denied applications divided by all applications excluding withdrawals and incomplete files, consistent with Federal Reserve methodology.</p>
+        </div>
+        <div class="method-item">
+          <div class="label">High-Priced Loans</div>
+          <p>Loans with APR more than 1.5 percentage points above comparable treasuries. Not necessarily predatory; used to flag areas for scrutiny.</p>
+        </div>
+        <div class="method-item">
+          <div class="label">Race/Ethnicity</div>
+          <p>Denial rates computed by race and ethnicity, with sample size thresholds (n ≥ 20) applied. Small-n groups noted throughout.</p>
+        </div>
+        <div class="method-item">
+          <div class="label">Geographic Analysis</div>
+          <p>Tract-level denial and high-priced loan rates mapped in R using tmap, overlaid with HUD RECAP Hispanic concentration thresholds from ACS 5-year estimates.</p>
+        </div>
+        <div class="method-item">
+          <div class="label">Context</div>
+          <p>Produced for Boulder HOME Consortium Consolidated Plan and AFFH fair lending assessment. Root Policy Research, 2024.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+</body>
+</html>
